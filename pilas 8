@@ -1,0 +1,101 @@
+import javax.swing.*;
+import java.util.Stack;
+
+class ManejoPila {
+    private Stack<Integer> pilaNumeros;
+
+    public ManejoPila() {
+        this.pilaNumeros = new Stack<>();
+        ingresarNumeros();
+    }
+
+    private void ingresarNumeros() {
+        int cantidad = obtenerEntero("Ingrese la cantidad de números a apilar");
+        for (int i = 0; i < cantidad; i++) {
+            pilaNumeros.push(obtenerEntero("Ingrese un número"));
+        }
+        JOptionPane.showMessageDialog(null, "Pila ingresada: " + pilaNumeros);
+    }
+
+    private int obtenerEntero(String mensaje) {
+        while (true) {
+            try {
+                return Integer.parseInt(JOptionPane.showInputDialog(mensaje));
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(null, "Error: Ingrese un número entero válido.", "Entrada inválida", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    public void calcularFibonacci() {
+        Stack<Integer> pilaAuxiliar = (Stack<Integer>) pilaNumeros.clone();
+        StringBuilder fibonacciSeries = new StringBuilder("Serie de Fibonacci para cada número:\n");
+        
+        while (!pilaAuxiliar.isEmpty()) {
+            int num = pilaAuxiliar.pop();
+            fibonacciSeries.append("Fibonacci de ").append(num).append(" = ").append(fibonacci(num)).append("\n");
+        }
+        
+        JOptionPane.showMessageDialog(null, fibonacciSeries.toString());
+    }
+
+    private int fibonacci(int n) {
+        if (n <= 1) return n;
+        return fibonacci(n - 1) + fibonacci(n - 2);
+    }
+
+    public void ordenarPila() {
+        if (pilaNumeros.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "La pila está vacía, no se puede ordenar.");
+            return;
+        }
+        Stack<Integer> pilaOrdenada = new Stack<>();
+        while (!pilaNumeros.isEmpty()) {
+            int temp = pilaNumeros.pop();
+            while (!pilaOrdenada.isEmpty() && pilaOrdenada.peek() > temp) {
+                pilaNumeros.push(pilaOrdenada.pop());
+            }
+            pilaOrdenada.push(temp);
+        }
+        pilaNumeros.addAll(pilaOrdenada);
+        JOptionPane.showMessageDialog(null, "Pila ordenada: " + pilaNumeros);
+    }
+
+    public void eliminarNumero() {
+        if (pilaNumeros.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "La pila está vacía, no hay números para eliminar.");
+            return;
+        }
+        int numeroEliminar = obtenerEntero("Ingrese el número que desea eliminar");
+        Stack<Integer> pilaTemporal = new Stack<>();
+        boolean encontrado = false;
+        
+        while (!pilaNumeros.isEmpty()) {
+            int num = pilaNumeros.pop();
+            if (num == numeroEliminar && !encontrado) {
+                encontrado = true;
+            } else {
+                pilaTemporal.push(num);
+            }
+        }
+        
+        while (!pilaTemporal.isEmpty()) {
+            pilaNumeros.push(pilaTemporal.pop());
+        }
+        
+        if (encontrado) {
+            JOptionPane.showMessageDialog(null, "Pila después de eliminar " + numeroEliminar + ": " + pilaNumeros);
+        } else {
+            JOptionPane.showMessageDialog(null, "El número no está en la pila.");
+        }
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        ManejoPila manejoPila = new ManejoPila();
+        manejoPila.calcularFibonacci();
+        manejoPila.ordenarPila();
+        manejoPila.eliminarNumero();
+    }
+}
